@@ -21,16 +21,29 @@ var App = {
 
     // TODO: Make sure the app loads data from the API
     // continually, instead of just once at the start.
+    setInterval(App.fetch, 3000);
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
       // examine the response from the server request:
-      console.log(data);
+      console.log('this is from fetch: ', data);
 
       // TODO: Use the data to update Messages and Rooms
       // and re-render the corresponding views.
-    });
+      // Messages.populateMessages.call(Messages, data);
+      if (data.length > 0) {
+        Messages.populateMessages(data, MessagesView.render);
+        Rooms.populateRooms(data, RoomsView.render);
+      }
+
+      //callback(data);
+      callback();
+
+      // Messages.populateMessages(data);
+      // Rooms.populateRooms(data);
+
+    }, null);
   },
 
   startSpinner: function() {

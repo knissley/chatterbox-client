@@ -1,5 +1,5 @@
 body {
-    background: #eee;
+    background: #f3f3f3;
     text-align: center;
     padding: 0 25px;
     font-family: arial, sans-serif;
@@ -88,3 +88,6 @@ form input[type=text] {
     background-color: #0090da;
 }
 
+.room-name {
+    font-size: .8rem;
+}
