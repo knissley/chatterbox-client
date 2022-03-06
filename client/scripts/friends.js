@@ -3,11 +3,29 @@
 // with and manipulate the data.
 
 var Friends = {
-  // TODO: Define how you want to store your list of friends.
 
-  _data: null,
+  _data: new Set(),
 
-  // TODO: Define methods which allow you to add, toggle,
-  // and check the friendship status of other users.
+  //return the friends at any given time
+  items: function() {
+    return [...Friends._data];
+  },
+
+  //return a boolean whether friends includes a particular name
+  isFriend: function(username) {
+    return Friends._data.has(username);
+  },
+
+  //will check whether a name is a friend, if so delete it, otherwise add it
+  toggleStatus: function(username, callback = () => {}) {
+    //accept a callback to 'refresh' the page when friend status has been toggled
+    if (Friends.isFriend(username)) {
+      Friends._data.delete(username);
+      callback(false);
+    } else {
+      Friends._data.add(username);
+      callback(true);
+    }
+  }
 
 };

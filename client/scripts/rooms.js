@@ -4,29 +4,46 @@
 
 var Rooms = {
 
-  // TODO: Define how you want to store the list of rooms
-  _data: [],
+  //use a set just like with friends data because we want to keep track of a unique set of values
+  _data: new Set(),
 
-  populateRooms: function (data, cb) {
-    // populate _data
-    //iterate over the input data
-    for (let i = 0; i < data.length; i++) {
-      //look at the roomname key within each message obj
-      //check if rooms data already contains that room
-      if (!Rooms._data.includes(data[i].roomname)) {
-        // if not, push into data
-        Rooms._data.push(data[i].roomname);
-      }
-    }
-    cb();
+  //keep track of the currently selected room to display
+  selected: 'lobby',
+
+  //get the list of rooms
+  items: function() {
+    return [...Rooms._data];
   },
 
+  //take in a roomname (default to lobby) and return whether the roomname passed in is currently selected
+  isSelected: function(roomname = 'lobby') {
+    return roomname === Rooms.selected || !roomname && Rooms.selected === 'lobby';
+  },
 
-  // TODO: Define methods which allow you to add rooms, update the list,
-  // mark a room as selected, etc.
+  //add a new room to the room set, change the selected room to the passed in room, and run a callback on the updated rooms data
+  add: function(roomname, callback = () => {}) {
+    Rooms._data.add(roomname);
+    Rooms.selected = roomname;
+    callback(Rooms.items());
+  },
 
-  //we wont want rooms to duplicate -- check if the room name is already in the structure
-  //app.fetch
+  //take messages, loops over them, and add their roomname to the rooms set, run a callback on the update rooms data
+  update: function(messages, callback = () => {}) {
+    var length = Rooms._data.size;
 
+    _.chain(messages)
+      .pluck('roomname')
+      .uniq()
+      .each(room => Rooms._data.add(room));
 
+    if (Rooms.selected === null) {
+      // make the first room the default selected room
+      Rooms.selected = Rooms._data.values().next().value;
+    }
+
+    // only invoke the callback if something changed
+    if (Rooms._data.size !== length) {
+      callback(Rooms.items());
+    }
+  }
 };

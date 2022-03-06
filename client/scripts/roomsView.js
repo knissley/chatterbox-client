@@ -7,42 +7,51 @@ var RoomsView = {
   $select: $('#rooms select'), // the dropdown menu
 
   initialize: function() {
-    // TODO: Perform any work which needs to be done
-    RoomsView.render();
-    // when this view loads.
+    //put event handlers in place on initialization
+    //change handler
+    RoomsView.$select.on('change', RoomsView.handleChange);
+    //click handler
+    RoomsView.$button.on('click', RoomsView.handleClick);
   },
 
   render: function() {
-    // TODO: Render out the list of rooms within the dropdown.
+    //get rid of all the options
+    RoomsView.$select.html('');
 
-    let options = '';
+    //render out individual options
+    // grab the values of the Rooms data set
+    // loop over each one
+    // render each room
+    Rooms.items().forEach(RoomsView.renderRoom);
 
-    //iterate over all of the _data for rooms
-    for (let i = 0; i < Rooms._data.length; i++) {
-      //for each room in the data array, create an option tag populate with the room name
-      options += `<option value="${Rooms._data[i]}">${Rooms._data[i]}</option>`;
-    }
-
-    //append the rooms to here
-    //append the option tag to the select element
-    RoomsView.$select.append(options);
-
-    // this.$chats.append(MessageView.render(message));
-
-    // //MessagesView.$chats
-    // console.log()
+    //select the option that is selected
+    RoomsView.$select.val(Rooms.selected);
   },
 
   renderRoom: function(roomname) {
-    // TODO: Render out all the messages within a single room.
+    //construct a jQuery option element with the value and text of the passed in roomname
+    const $option = $('<option>')
+      .val(roomname)
+      .text(roomname);
+    //append the constructed jQuery element to the select element (dropdown)
+    RoomsView.$select.append($option);
   },
 
   handleChange: function(event) {
-    // TODO: Handle a user selecting a different room.
+    //set the selected room from the val of $select
+    Rooms.selected = RoomsView.$select.val();
+    //render messages again after .selected is changed
+    MessagesView.render();
   },
 
   handleClick: function(event) {
-    // TODO: Handle the user clicking the "Add Room" button.
+    let roomname = prompt('Enter a room name');
+    if (roomname) {
+      Rooms.add(roomname, () => {
+        RoomsView.render();
+        MessagesView.render();
+      });
+    }
   }
 
 };

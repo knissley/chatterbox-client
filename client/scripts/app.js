@@ -19,31 +19,22 @@ var App = {
     App.startSpinner();
     App.fetch(App.stopSpinner);
 
-    // TODO: Make sure the app loads data from the API
-    // continually, instead of just once at the start.
+    //set an interval to continously fetch data
     setInterval(App.fetch, 3000);
   },
 
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
-      // examine the response from the server request:
-      console.log('this is from fetch: ', data);
 
-      // TODO: Use the data to update Messages and Rooms
-      // and re-render the corresponding views.
-      // Messages.populateMessages.call(Messages, data);
-      if (data.length > 0) {
-        Messages.populateMessages(data, MessagesView.render);
-        Rooms.populateRooms(data, RoomsView.render);
+      //Only update if we have messages
+      if (data && data.length) {
+        Rooms.update(data, RoomsView.render);
+        Messages.update(data, MessagesView.render);
+
+        callback();
       }
-
-      //callback(data);
-      callback();
-
-      // Messages.populateMessages(data);
-      // Rooms.populateRooms(data);
-
-    }, null);
+      return;
+    });
   },
 
   startSpinner: function() {
