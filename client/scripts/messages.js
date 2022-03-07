@@ -20,13 +20,14 @@ var Messages = {
 
   //update the overall storage
   update: function(messages, callback = () => {}) {
+    //grab the previous length (before updating in the for loop)
     let length = Object.keys(Messages._data).length;
 
     for (let message of messages) {
       Messages._data[message.message_id] = Messages.conform(message);
     }
 
-    //Only invoke the passed in callback if something has changed
+    //Only invoke the passed in callback if something has changed (if the current length is different than the previous length)
     if (Object.keys(Messages._data).length !== length) {
       callback(Messages.items());
     }
